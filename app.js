@@ -1,34 +1,43 @@
 (function() {
     'use strict';
-    angular.module('mpApp', [])
-        .controller('LunchCheckController', LunchCheckController);
-    LunchCheckController.injector = ['$scope'];
+    angular.module('cricApp', [])
+        .controller('CricController', CricController)
+        .service('CricService', CricService);
 
-    function LunchCheckController($scope) {
-      $scope.lunchMessage ="";
-        $scope.getMenuList = function(menu) {
-            var menuList = [];
-            $scope.newMenuList = [];
-            // creating menu list from user input
-            if (menu != undefined) {
-                var menuList = menu.split(",");
-                // Looping through array, creating a new list from menuList excluding empty values
-                angular.forEach(menuList, function(value) {
-                    if (value != '') {
-                        $scope.newMenuList.push(value);
-                    }
-                });
-            }
+
+    CricController.injector = ['$scope', 'CricService'];
+
+    function CricController($scope, CricService) {
+        var controller = this;
+        controller.options = ["Available", "Not-Available", "Tentive","Out of town"];
+        controller.playerName = "";
+        controller.playerAvailablity = "";
+
+
+        controller.addInformation = function() {
+            CricService.addInfo(controller.playerName, controller.playerAvailablity);
+            controller.playerList = CricService.getPlayersList();
         };
-        $scope.checkManu = function(newMenu) {
-            $scope.lunchMessage = "Please enter data first";
-            if ( newMenu == null || newMenu == undefined || (newMenu != undefined &&newMenu.length==0)) {
-                $scope.lunchMessage = "Please enter data first";
-            } else if (newMenu.length <= 3) {
-                $scope.lunchMessage = "Enjoy!";
-            } else {
-                $scope.lunchMessage = "Too much!";
-            }
-        };
+            
     };
+
+    function CricService() {
+        var service = this;
+        var team = [];
+
+        service.addInfo = function(playerName, playerAvailablity) {
+
+            var player = {
+                name: playerName,
+                availabilty: playerAvailablity
+            };
+            team.push(player);
+        };
+        
+    service.getPlayersList = function(){
+        return team;
+    }
+
+
+    }
 })();
